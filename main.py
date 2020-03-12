@@ -1,8 +1,10 @@
 import vk_api
-from pprint import pprint
+import config
+from config import channels
+
 
 def auth_vk():
-    vk_session = vk_api.VkApi('', '')
+    vk_session = vk_api.VkApi(config.login, config.password)
     try:
         vk_session.auth(token_only=True)
     except vk_api.AuthError as error_msg:
@@ -11,16 +13,29 @@ def auth_vk():
 
     return vk_session.get_api()
 
-response = auth_vk().wall.get(owner_id=-40062539, offset=1, count=7)
-for i in response['items']:
-    print(i['text'])
-    for a in i['attachments']:
-        if(a['type'] == 'photo'):
-            print(a['photo']['sizes'][4]['url'])
-        elif(a['type'] == 'video'):
-            print(a['video']['description'])
-            id_user = a['video']['owner_id']
-            id_video = a['video']['id']
-            r = auth_vk().video.get(owner_id=-40062539, videos = str(id_user)+'_'+str(id_video))
-            for i in r['items']:
-                print(i['player'])
+
+def get_posts_from_channel(channel: int, count: int) -> list:
+    response = auth_vk().wall.get(owner_id=channel, offset=1, count=count)
+    data_list = []
+    data = {}
+    for i in response['items']:
+        data['text'] = i['text']
+        data['photo'] = []
+        data['video'] = []
+        for a in i['attachments']:
+            if(a['type'] == 'photo'):
+                data['photo'].append(a['photo']['sizes'][4]['url'])
+            elif(a['type'] == 'video'):
+                data['video'].append(a['video']['description'])
+                id_user = a['video']['owner_id']
+                id_video = a['video']['id']
+                r = auth_vk().video.get(owner_id=channels[0], videos = str(id_user)+'_'+str(id_video))
+                for i in r['items']:
+                    data['video'].append(i['player'])
+        data_list.append(data)
+    return data_list
+
+
+if __name__ == "__main__":
+    post = get_posts_from_channel(channels[0], 1)
+    print(post)
