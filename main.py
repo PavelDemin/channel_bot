@@ -23,15 +23,15 @@ def get_posts_from_channel(channel: int, count: int) -> list:
         data['photo'] = []
         data['video'] = []
         for a in i['attachments']:
-            if(a['type'] == 'photo'):
+            if a['type'] == 'photo':
                 data['photo'].append(a['photo']['sizes'][4]['url'])
-            elif(a['type'] == 'video'):
+            elif a['type'] == 'video':
                 data['video'].append(a['video']['description'])
                 id_user = a['video']['owner_id']
                 id_video = a['video']['id']
-                r = auth_vk().video.get(owner_id=channels[0], videos = str(id_user)+'_'+str(id_video))
-                for i in r['items']:
-                    data['video'].append(i['player'])
+                r = auth_vk().video.get(owner_id=channels[0], videos=str(id_user) + '_' + str(id_video))
+                for v in r['items']:
+                    data['video'].append(v['player'])
         data_list.append(data)
     return data_list
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="TerminalProjectOptionsProvider">
+    <envs>
+      <env key="TELEGRAM_TOKEN" value="1012533564:AAH3d7nR5A_lI41bJ7QqzHinUSzmTIxrbmA" />
+      <env key="PYTHONPATH" value="$PROJECT_DIR$" />
+    </envs>
+  </component>
+</project>
