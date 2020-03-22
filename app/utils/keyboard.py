@@ -5,9 +5,10 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeybo
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.markdown import hbold
 from app.text import text as t
+from app.text import settings as st
 from app.models.channel import Channel
 
-cb_channel_settings = CallbackData("channel", "id", "property", "value")
+# cb_channel_settings = CallbackData("channel", "id", "property", "value")
 cb_channel_crud = CallbackData("crud", "property", "value")
 
 FLAG_STATUS = ["❌", "✅"]
@@ -22,14 +23,23 @@ def get_main_menu_markup():
 
 
 def get_channel_list_markup(channels: list) -> Tuple[str, InlineKeyboardMarkup]:
-    inline_keyboard = [[InlineKeyboardButton(
-        text=channel.name,
-        callback_data=cb_channel_settings.new(
-            id=channel.id,
-            property="choose",
-            value="edit"
+    inline_keyboard = [
+        [
+            InlineKeyboardButton(
+                text=channel.name,
+                callback_data=cb_channel_crud.new(
+                    property="edit",
+                    value=channel.id
+                )
+            ),
+            InlineKeyboardButton(
+                text="❌",
+                callback_data=cb_channel_crud.new(
+                    property="del",
+                    value=channel.id
+                )
             )
-        )] for channel in channels]
+        ] for channel in channels]
     inline_keyboard.append([
         InlineKeyboardButton(
             text=t['add_channel'],
@@ -44,6 +54,77 @@ def get_channel_list_markup(channels: list) -> Tuple[str, InlineKeyboardMarkup]:
         InlineKeyboardMarkup(
             inline_keyboard=inline_keyboard
         )
+    )
+
+
+def get_yes_no_inline_markup() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Да",
+                    callback_data=cb_channel_crud.new(
+                        property="bool",
+                        value="1"
+                    )
+                ),
+                InlineKeyboardButton(
+                    text="Нет",
+                    callback_data=cb_channel_crud.new(
+                        property="bool",
+                        value="0"
+                    )
+                )
+            ]
+        ]
+    )
+
+
+def change_settings_channel_markup(channel) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Изменить настройки",
+                    callback_data=cb_channel_crud.new(
+                        property="edit_channel",
+                        value=channel
+                    )
+                )
+            ]
+        ]
+    )
+
+
+def settings_channel_list() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Изменить настройки",
+                    callback_data=cb_channel_crud.new(
+                        property="edit_channel",
+                        value="channel"
+                    )
+                )
+            ]
+        ]
+    )
+
+
+def settings_channel_edit_markup() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=st[param],
+                    callback_data=cb_channel_crud.new(
+                        property="edit_param",
+                        value=param
+                    )
+                )
+            ] for param in st]
+
     )
 
 # def get_channel_settings_markup(
